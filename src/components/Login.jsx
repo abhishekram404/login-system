@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 export default function Login() {
   const [isHidden, setHidden] = useState(true);
   const [password, setPassword] = useState("");
-  const [generatedPassword, setGeneratedPassword] = useState("");
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -11,11 +10,6 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  };
-
-  const generatePasswordStyle = {
-    fontFamily: "monospace",
-    fontSize: "12px",
   };
 
   return (
@@ -29,13 +23,7 @@ export default function Login() {
         <label htmlFor="email" className="form-label">
           Email
         </label>
-        <input
-          type="email"
-          id="email"
-          required
-          className="form-control"
-          placeholder="example@somewhere.com"
-        />
+        <input type="email" id="email" required className="form-control" />
       </div>
 
       <div className="mb-3">
@@ -50,7 +38,6 @@ export default function Login() {
             onChange={handlePasswordChange}
             value={password}
             className="form-control"
-            placeholder="must be stronger than john cena..."
           />
           {password && (
             <button
@@ -63,18 +50,6 @@ export default function Login() {
               {isHidden ? "Show" : "Hide"}
             </button>
           )}
-        </div>
-        <div className="form-text py-2">
-          Use suggested password
-          <code
-            className=" mx-2"
-            style={generatePasswordStyle}
-            onClick={() => {
-              setPassword(generatedPassword);
-            }}
-          >
-            {generatedPassword}
-          </code>
         </div>
       </div>
       <div className="btn-group shadow-sm">

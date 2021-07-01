@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function Register() {
   const [isHidden, setHidden] = useState(true);
 
   const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
   const [generatedPassword, setGeneratedPassword] = useState("");
   const [doPasswordsMatch, setPasswordsMatch] = useState(false);
   const generatePassword = () => {
@@ -18,7 +19,6 @@ export default function Register() {
           Math.floor(Math.random(characters.length) * characters.length)
         ];
     }
-    // return suggested_password;
     setGeneratedPassword(suggested_password);
   };
   const handleSubmit = (e) => {
@@ -28,17 +28,8 @@ export default function Register() {
     setPassword(e.target.value);
   };
 
-  const password2 = useRef(null);
-
-  const handlePasswordComparison = (e) => {
-    if (!password2.current.value) {
-      return;
-    }
-    comparePasswords();
-    console.log(doPasswordsMatch);
-  };
   const comparePasswords = () => {
-    if (password2.current.value === password) {
+    if (password2 === password) {
       setPasswordsMatch(true);
     } else {
       setPasswordsMatch(false);
@@ -48,6 +39,10 @@ export default function Register() {
   useEffect(() => {
     generatePassword();
   }, []);
+
+  useEffect(() => {
+    comparePasswords();
+  }, [password, password2]);
 
   const generatePasswordStyle = {
     fontFamily: "monospace",
@@ -90,7 +85,7 @@ export default function Register() {
             id="password"
             required
             onChange={handlePasswordChange}
-            onBlur={handlePasswordComparison}
+            // onBlur={handlePasswordComparison}
             value={password}
             className="form-control"
           />
@@ -101,7 +96,6 @@ export default function Register() {
                 setHidden(!isHidden);
               }}
             >
-              {/* <span className="glyphicon-icon"></span> */}
               {isHidden ? "Show" : "Hide"}
             </button>
           )}
@@ -113,7 +107,9 @@ export default function Register() {
             style={generatePasswordStyle}
             onClick={() => {
               setPassword(generatedPassword);
+              setPassword2(generatedPassword);
               generatePassword();
+              comparePasswords();
             }}
           >
             {generatedPassword}
@@ -125,11 +121,13 @@ export default function Register() {
           Confirm Password
         </label>
         <input
-          type="password"
+          type={isHidden ? "password" : "text"}
           className="form-control"
           id="confirm-password"
-          onChange={handlePasswordComparison}
-          ref={password2}
+          onChange={(e) => {
+            setPassword2(e.target.value);
+          }}
+          value={password2}
         />
         {!doPasswordsMatch && (
           <div className="form-text text-danger">Passwords do not match.</div>
