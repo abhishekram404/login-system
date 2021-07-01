@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "mappings": "ACAA,AAAA,IAAI,CAAC;EACH,KAAK,EAAE,GAAG;CACX",
+    "sources": [
+        "App.scss",
+        "Login.scss"
+    ],
+    "names": [],
+    "file": "App.css"
+}
