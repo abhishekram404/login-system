@@ -14,6 +14,11 @@ export default function Navbar() {
           </Link>
         </li>
         <li className="nav-item mx-3">
+          <Link to="/profile" className="nav-link">
+            Profile
+          </Link>
+        </li>
+        <li className="nav-item mx-3">
           <Link to="/users" className="nav-link">
             Users
           </Link>

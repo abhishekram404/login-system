@@ -11,7 +11,8 @@ exports.verifyUserToken = async (req, res, next) => {
   if (!token || token == null) {
     return res.status(400).send("Access denied / Unauthorized request");
   }
-  let verifiedUser = jwt.verify(token, "secret_phrase");
-  console.log(verifiedUser);
+  let verifiedUser = jwt.verify(token, process.env.JWT_SECRET);
+  req.verifiedUser = verifiedUser;
+  // console.log(verifiedUser);
   next();
 };

@@ -94,7 +94,11 @@ exports.login = async (req, res) => {
 };
 
 exports.profile = (req, res) => {
-  res.send("welcome to your profile");
+  try {
+    res.send({ user: req.verifiedUser });
+  } catch (err) {
+    res.send({ error: "Something went wrong!!!" }).status(500);
+  }
 };
 
 exports.delete = async (req, res) => {
