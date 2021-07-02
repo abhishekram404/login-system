@@ -3,10 +3,11 @@ const validate = require("../validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 exports.register = async (req, res) => {
+  // console.log(req.body);
   const { error } = validate(req.body);
 
   if (error) {
-    return res.status(400).send(error.details[0].message);
+    return res.status(400).json({ error: error.details[0].message });
   }
 
   try {
@@ -14,6 +15,7 @@ exports.register = async (req, res) => {
 
     const userExist = await User.findOne({ email: email });
     if (userExist) {
+      console.log(userExist);
       return res.status(400).json({
         error:
           "The email that you entered is already associated with another account. Please Login.",
@@ -35,7 +37,7 @@ exports.register = async (req, res) => {
 
     res.status(200).json({ token: token });
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({ error: "Something went wrong! " });
   }
 };
 
@@ -52,14 +54,14 @@ exports.login = async (req, res) => {
         return res
           .status(200)
           .header("auth-token", token)
-          .send({ token: token });
+          .json({ token: token });
       }
-      return res.send("Wrong email/password");
+      return res.json({ error: "Wrong email/password" }).status(400);
     }
 
-    return res.status(404).send("Wrong email/password.");
+    return res.json({ error: "Wrong email/password" }).status(400);
   } catch (err) {
-    return res.status(500).send("Something went wrong!!!");
+    return res.status(500).json({ error: "Something went wrong!!!" });
   }
 };
 

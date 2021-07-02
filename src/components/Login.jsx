@@ -1,15 +1,24 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { send_login_request } from "../redux/actions/loginActions";
+import { useDispatch, useSelector } from "react-redux";
 export default function Login() {
+  const dispatch = useDispatch();
+
   const [isHidden, setHidden] = useState(true);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
+  const { error } = useSelector((state) => state.loginReducer);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    dispatch(
+      send_login_request({
+        email: email,
+        password: password,
+      })
+    );
   };
 
   return (
@@ -19,11 +28,30 @@ export default function Login() {
     >
       <h2 className="text-center text-primary">Login</h2>
       <hr />
+      {error && (
+        <>
+          {" "}
+          <div className="form-text text-light py-2 rounded my-0 text-center bg-danger">
+            {error}
+          </div>
+          <hr />
+        </>
+      )}
+
       <div className="form-group mb-3">
         <label htmlFor="email" className="form-label">
           Email
         </label>
-        <input type="email" id="email" required className="form-control" />
+        <input
+          type="email"
+          id="email"
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
+          value={email}
+          required
+          className="form-control"
+        />
       </div>
 
       <div className="mb-3">
@@ -35,7 +63,9 @@ export default function Login() {
             type={isHidden ? "password" : "text"}
             id="password"
             required
-            onChange={handlePasswordChange}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
             value={password}
             className="form-control"
           />

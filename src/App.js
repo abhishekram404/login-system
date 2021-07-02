@@ -5,12 +5,13 @@ import Home from "./components/Home";
 import Users from "./components/Users";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Router, Switch, Route } from "react-router-dom";
+import history from "./history";
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
+      <Router history={history}>
         <Navbar />
         <Switch>
           <Route path="/" exact component={Home} />
@@ -19,7 +20,7 @@ function App() {
           <Route path="/register" component={Register} />
           <Route path="*">"Error"</Route>
         </Switch>
-      </BrowserRouter>
+      </Router>
     </div>
   );
 }

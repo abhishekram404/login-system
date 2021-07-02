@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { send_register_request } from "../redux/actions/actions";
-import { useDispatch } from "react-redux";
+import { send_register_request } from "../redux/actions/registerActions";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Register() {
+  const { error } = useSelector((state) => state.registerReducer);
   const dispatch = useDispatch();
   const [isHidden, setHidden] = useState(true);
 
@@ -69,6 +70,15 @@ export default function Register() {
     >
       <h2 className="text-center text-primary">Register</h2>
       <hr />
+      {/* {error && (
+        <>
+          {" "}
+          <div className="form-text text-light py-2 rounded my-0 text-center bg-danger">
+            {error}
+          </div>
+          <hr />
+        </>
+      )} */}
       <div className="from-group mb-3">
         <label htmlFor="fullname" className="form-label">
           Full Name
