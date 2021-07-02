@@ -9,19 +9,20 @@ export const send_register_request = (formData) => {
         email: formData.email,
         username: formData.username,
         password: formData.password,
+        isAdmin: formData.isAdmin,
       });
 
       // TODO : Fix the unknown error
       if (data.token) {
         await dispatch(register_request_success(data.token));
-        history.push("/");
+        history.push("/users");
         return;
       }
       await dispatch(register_error(data.error));
       history.push("/register");
       return;
     } catch (error) {
-      await dispatch(register_error(error));
+      await dispatch(register_error(error.response.data.error));
       history.push("/register");
     }
   };

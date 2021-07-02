@@ -1,5 +1,7 @@
-import initialState from "./initialState";
-export const register_reducer = (state = initialState, action) => {
+export const register_reducer = (
+  state = { token: null, error: null },
+  action
+) => {
   switch (action.type) {
     case "REGISTRATION_SUCCESSFUL":
       return {

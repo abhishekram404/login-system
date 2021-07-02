@@ -11,6 +11,7 @@ export default function Register() {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [isAdmin, setAdmin] = useState(false);
 
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -31,14 +32,16 @@ export default function Register() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(
-      send_register_request({
-        name,
-        username,
-        email,
-        password,
-      })
-    );
+    doPasswordsMatch &&
+      dispatch(
+        send_register_request({
+          name,
+          username,
+          email,
+          password,
+          isAdmin,
+        })
+      );
   };
 
   const comparePasswords = () => {
@@ -70,7 +73,7 @@ export default function Register() {
     >
       <h2 className="text-center text-primary">Register</h2>
       <hr />
-      {/* {error && (
+      {error && (
         <>
           {" "}
           <div className="form-text text-light py-2 rounded my-0 text-center bg-danger">
@@ -78,7 +81,7 @@ export default function Register() {
           </div>
           <hr />
         </>
-      )} */}
+      )}
       <div className="from-group mb-3">
         <label htmlFor="fullname" className="form-label">
           Full Name
@@ -205,11 +208,30 @@ export default function Register() {
           <div className="form-text text-danger">Passwords do not match.</div>
         )}
       </div>
+      <div className="mb-3 form-check">
+        <label htmlFor="isAdmin" className="form-check-label">
+          I want admin privileges.
+        </label>
+        <input
+          type="checkbox"
+          id="isAdmin"
+          className="form-check-input"
+          checked={isAdmin}
+          onChange={(e) => setAdmin(!isAdmin)}
+        />
+      </div>
       <div className="btn-group shadow-sm">
-        <Link to="/" type="submit" className="btn btn-light">
+        <Link to="/" type="button" className="btn btn-light">
           Cancel
         </Link>
-        <button type="submit" className="btn btn-primary ms-auto">
+        <button
+          type="submit"
+          className={
+            doPasswordsMatch
+              ? "btn btn-primary ms-auto"
+              : "btn btn-primary disabled ms-auto"
+          }
+        >
           Login
         </button>
       </div>

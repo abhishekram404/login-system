@@ -3,10 +3,18 @@ import history from "../../history";
 export const send_login_request = (formData) => {
   return async (dispatch) => {
     try {
-      const { data } = await axios.post("http://localhost:4000/user/login", {
-        email: formData.email,
-        password: formData.password,
-      });
+      const { data } = await axios.post(
+        "http://localhost:4000/user/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (data.token) {
         await dispatch(login_success(data.token));
@@ -14,8 +22,9 @@ export const send_login_request = (formData) => {
         return;
       }
       await dispatch(login_error(data.error));
-    } catch (err) {
-      dispatch(login_error(err));
+    } catch (error) {
+      dispatch(login_error(error.response.data.error));
+      // dispatch(login_error("Kuch toh gadbad hai daya"));
     }
   };
 };

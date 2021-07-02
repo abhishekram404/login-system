@@ -45,6 +45,7 @@ export default function Login() {
         <input
           type="email"
           id="email"
+          name="email"
           onChange={(e) => {
             setEmail(e.target.value);
           }}
@@ -62,6 +63,7 @@ export default function Login() {
           <input
             type={isHidden ? "password" : "text"}
             id="password"
+            name="password"
             required
             onChange={(e) => {
               setPassword(e.target.value);

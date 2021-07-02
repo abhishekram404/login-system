@@ -6,15 +6,20 @@ const userRoutes = require("./routes/userRoutes");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
 dotenv.config();
 app.use(cors());
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(express.json());
 
 mongoose.connect(
-  "mongodb://localhost:27017/login-system",
-  { useNewUrlParser: true, useUnifiedTopology: true },
+  process.env.MONGO_URL,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: true,
+    useCreateIndex: true,
+  },
   () => {
     console.log("Connected to database");
   }

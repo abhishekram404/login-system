@@ -2,6 +2,16 @@ const User = require("../models/models");
 const validate = require("../validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+exports.users = async (req, res) => {
+  try {
+    const allUsers = await User.find({}).select("-password");
+    return res.status(200).json({ users: allUsers });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 exports.register = async (req, res) => {
   // console.log(req.body);
   const { error } = validate(req.body);
@@ -11,7 +21,7 @@ exports.register = async (req, res) => {
   }
 
   try {
-    const { name, username, email, password } = req.body;
+    const { name, username, email, password, isAdmin } = req.body;
 
     const userExist = await User.findOne({ email: email });
     if (userExist) {
@@ -30,38 +40,56 @@ exports.register = async (req, res) => {
       username: username.replace(/\s/g, ""),
       email: email.trim(),
       password: hashedPassword,
+      isAdmin,
     });
 
-    const payload = { id: createdUser.id };
-    const token = jwt.sign(payload, "secret_phrase");
+    const payload = {
+      id: createdUser._id,
+      email: createdUser.email,
+      isAdmin: createdUser.isAdmin,
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: 3600,
+    });
 
-    res.status(200).json({ token: token });
-  } catch (err) {
-    res.status(500).json({ error: "Something went wrong! " });
+    res.status(200).send({ token: token });
+  } catch (error) {
+    res.status(500).send({ error: "Something went wrong! " });
+    // res.status(500).send({ error: error.message });
   }
 };
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = await req.body;
+    console.log(req.body);
 
     const foundUser = await User.findOne({ email: email });
     if (foundUser) {
       const validPassword = await bcrypt.compare(password, foundUser.password);
       if (validPassword) {
-        const payload = { id: foundUser.id };
-        const token = jwt.sign(payload, "secret_phrase");
-        return res
-          .status(200)
-          .header("auth-token", token)
-          .json({ token: token });
+        const payload = {
+          id: foundUser._id,
+          email: foundUser.email,
+          isAdmin: foundUser.isAdmin,
+        };
+        const token = await jwt.sign(payload, process.env.JWT_SECRET, {
+          expiresIn: 3600,
+        });
+        return (
+          res
+            .status(200)
+            // .header("auth-token", token)
+            .send({ token: token })
+        );
       }
-      return res.json({ error: "Wrong email/password" }).status(400);
+      return res.send({ error: "Wrong email/password" }).status(400);
     }
 
-    return res.json({ error: "Wrong email/password" }).status(400);
+    return res.send({ error: "Wrong email/password" }).status(400);
   } catch (err) {
-    return res.status(500).json({ error: "Something went wrong!!!" });
+    return res.status(500).send({ error: "Something went wrong!!!" });
+    // return res.status(500).send({ error: err.message });
   }
 };
 
@@ -73,5 +101,3 @@ exports.delete = async (req, res) => {
   const d = await User.deleteMany({});
   res.send(d);
 };
-
-//404 - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZGQ4NzJjMzE1NzM1MzY5MmE5MjU4MyIsImlhdCI6MTYyNTEzMDc5Nn0.C3lkNcqiwigY_Wu6grkMQUE7W7g7vE3HCxz0ryhN0RE

@@ -1,5 +1,4 @@
-import initialState from "./initialState";
-export const login_reducer = (state = initialState, action) => {
+export const login_reducer = (state = { token: null, error: null }, action) => {
   switch (action.type) {
     case "LOGIN_SUCCESS":
       return {
