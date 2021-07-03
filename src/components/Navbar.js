@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout_action } from "../redux/actions/form_actions";
-import history from "../history";
 export default function Navbar() {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.formReducer);

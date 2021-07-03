@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { send_login_request } from "../redux/actions/loginActions";
+import { send_login_request } from "../redux/actions/form_actions";
 import { useDispatch, useSelector } from "react-redux";
 import history from "../history";
 export default function Login() {
