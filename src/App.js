@@ -6,7 +6,7 @@ import Users from "./components/Users";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
-import { BrowserRouter, Router, Switch, Route } from "react-router-dom";
+import { Router, Switch, Route } from "react-router-dom";
 import history from "./history";
 
 function App() {
