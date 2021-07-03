@@ -8,6 +8,9 @@ import Register from "./components/Register";
 import Profile from "./components/Profile";
 import { Router, Switch, Route } from "react-router-dom";
 import history from "./history";
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:4000/";
 
 function App() {
   return (

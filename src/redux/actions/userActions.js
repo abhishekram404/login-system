@@ -2,7 +2,7 @@ import axios from "axios";
 export const fetch_users = () => {
   return async (dispatch) => {
     try {
-      const { data } = await axios.get("http://localhost:4000/user/all");
+      const { data } = await axios.get("/user/all");
 
       if (data.users) {
         dispatch(fetch_users_success(data.users));
