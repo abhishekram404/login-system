@@ -10,7 +10,7 @@ export default function Users() {
 
   useEffect(() => {
     dispatch(fetch_users());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     setUsersList(users);
@@ -31,12 +31,7 @@ export default function Users() {
               <div className="col-4">Email</div>
               <div className="col-2 text-center">Admin</div>
             </div>
-            {/* <div className="row border-bottom p-2">
-              <div className="col-1 ">1</div>
-              <div className="col ">Keshav Kishor Ram</div>
-              <div className="col ">keshavram</div>
-              <div className="col ">keshavram19@@kmclalitpur.edu.np</div>
-            </div> */}
+
             {usersList &&
               usersList.map((user, index) => {
                 return (
