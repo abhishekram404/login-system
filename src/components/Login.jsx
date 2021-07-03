@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { send_login_request } from "../redux/actions/loginActions";
+import { send_login_request } from "../redux/actions/form_actions";
 import { useDispatch, useSelector } from "react-redux";
+import history from "../history";
 export default function Login() {
   const dispatch = useDispatch();
+
+  const { token, error } = useSelector((state) => state.formReducer);
+  console.log(token, error);
+
+  if (token) {
+    history.push("/");
+  }
 
   const [isHidden, setHidden] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const { error } = useSelector((state) => state.loginReducer);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,11 +34,11 @@ export default function Login() {
     >
       <h2 className="text-center text-primary">Login</h2>
       <hr />
-      {error && (
+      {error.loginError && (
         <>
           {" "}
           <div className="form-text text-light py-2 rounded my-0 text-center bg-danger">
-            {error}
+            {error.loginError}
           </div>
           <hr />
         </>
