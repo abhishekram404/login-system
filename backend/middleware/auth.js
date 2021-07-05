@@ -1,18 +1,23 @@
+// auth.js (middleware for verifying jwt token in cookies)
+
 const jwt = require("jsonwebtoken");
 
 exports.verifyUserToken = async (req, res, next) => {
-  console.log(req.headers);
-  let token = await req.headers.authorization;
+  console.log("cookies", req);
+  console.log("headers", req.headers);
 
-  if (!token)
-    return res.status(400).send("Access denied / Unauthorized request");
+  try {
+    let token = (await req.cookies.jwt) || "";
 
-  token = token.split(" ")[1];
-  if (!token || token == null) {
-    return res.status(400).send("Access denied / Unauthorized request");
+    if (!token) {
+      return res.status(400).send("Access denied / Unauthorized request");
+    }
+
+    let verifiedUser = await jwt.verify(token, process.env.JWT_SECRET);
+    req.verifiedUser = verifiedUser;
+    console.log(verifiedUser);
+    next();
+  } catch (err) {
+    return res.status(500).send({ error: "Something went wrong!!!" });
   }
-  let verifiedUser = jwt.verify(token, process.env.JWT_SECRET);
-  req.verifiedUser = verifiedUser;
-  // console.log(verifiedUser);
-  next();
 };

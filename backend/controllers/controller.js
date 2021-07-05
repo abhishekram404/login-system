@@ -4,11 +4,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 exports.users = async (req, res) => {
+  console.log(req.cookies);
+  console.log(req.headers);
   try {
     const allUsers = await User.find({}).select("-password");
-    return res.status(200).json({ users: allUsers });
+    return res.status(200).send({ users: allUsers });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).send({ error: error.message });
   }
 };
 
@@ -59,10 +61,11 @@ exports.register = async (req, res) => {
   }
 };
 
+// Login functionality
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = await req.body;
-    console.log(req.body);
 
     const foundUser = await User.findOne({ email: email });
     if (foundUser) {
@@ -73,29 +76,31 @@ exports.login = async (req, res) => {
           email: foundUser.email,
           isAdmin: foundUser.isAdmin,
         };
+
         const token = await jwt.sign(payload, process.env.JWT_SECRET, {
           expiresIn: 3600,
         });
-        return (
-          res
-            .status(200)
-            // .header("auth-token", token)
-            .send({ token: token })
-        );
+        return res.cookie("jwt", token, {
+          httpOnly: true,
+          expires: new Date(Number(new Date().now) + 1 * 360000),
+          secure: false,
+        });
       }
       return res.send({ error: "Wrong email/password" }).status(400);
     }
 
     return res.send({ error: "Wrong email/password" }).status(400);
   } catch (err) {
-    return res.status(500).send({ error: "Something went wrong!!!" });
-    // return res.status(500).send({ error: err.message });
+    // return res.status(500).send({ error: "Something went wrong!!!" });
+    return res.status(500).send({ error: err.message });
   }
 };
 
 exports.profile = (req, res) => {
+  console.log("cookies", req.cookies);
+  console.log("headers", req.headers);
   try {
-    res.send({ user: req.verifiedUser });
+    res.send({ user: req.verifiedUser }).header({});
   } catch (err) {
     res.send({ error: "Something went wrong!!!" }).status(500);
   }

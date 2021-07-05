@@ -6,10 +6,19 @@ const userRoutes = require("./routes/userRoutes");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-// const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 dotenv.config();
-app.use(cors());
-// app.use(cookieParser());
+
+//index.js  (server)
+
+app.use(
+  cors({
+    credentials: true,
+    origin: ["http://localhost:3000", "http://localhost:4000"],
+  })
+);
+
+app.use(cookieParser());
 app.use(express.json());
 
 mongoose.connect(
