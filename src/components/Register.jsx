@@ -2,8 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { send_register_request } from "../redux/actions/form_actions";
 import { useDispatch, useSelector } from "react-redux";
-
+import axios from "axios";
 export default function Register() {
+  const [usernameAvailable, setUsernameAvailable] = useState({
+    available: undefined,
+    message: "",
+  });
+
   const dispatch = useDispatch();
   const { error } = useSelector((state) => state.formReducer);
 
@@ -31,13 +36,37 @@ export default function Register() {
     }
     setGeneratedPassword(suggested_password);
   };
+
+  const checkUsernameAvailability = async (uname) => {
+    let format = /`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~/;
+    if (format.test(uname)) {
+      setUsernameAvailable({
+        available: false,
+        message: "Username can't contain special character and spaces..",
+      });
+      return;
+    }
+    if (uname.length < 3) {
+      setUsernameAvailable({
+        available: false,
+        message: "Length must be greater than or equal to 3 characters.",
+      });
+      return;
+    }
+    const { data } = await axios.post("/user/checkUsernameAvailability", {
+      username: uname,
+    });
+    setUsernameAvailable(data);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     doPasswordsMatch &&
+      password.length >= 6 &&
       dispatch(
         send_register_request({
           name,
-          username,
+          username: username.toLowerCase(),
           email,
           password,
           isAdmin,
@@ -78,8 +107,23 @@ export default function Register() {
         {error.registerError && (
           <>
             {" "}
-            <div className="form-text text-light py-2 rounded my-0 text-center bg-danger">
-              {error.registerError}
+            <div
+              class="alert alert-danger d-flex justify-content-center align-items-center"
+              role="alert"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="currentColor"
+                class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"
+                viewBox="0 0 16 16"
+                role="img"
+                aria-label="Warning:"
+              >
+                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+              </svg>
+              <div>{error.registerError}</div>
             </div>
             <hr />
           </>
@@ -107,10 +151,21 @@ export default function Register() {
             type="text"
             className="form-control"
             onChange={(e) => {
+              checkUsernameAvailability(e.target.value.trim());
               setUsername(e.target.value);
             }}
             value={username}
           />
+
+          {usernameAvailable && usernameAvailable.available ? (
+            <div className="form-text text-success">
+              {usernameAvailable.message}
+            </div>
+          ) : (
+            <div className="form-text text-danger">
+              {usernameAvailable.message}
+            </div>
+          )}
         </div>
         <div className="form-group mb-3">
           <label htmlFor="email" className="form-label">
@@ -229,12 +284,12 @@ export default function Register() {
           <button
             type="submit"
             className={
-              doPasswordsMatch
+              doPasswordsMatch && password.length >= 6
                 ? "btn btn-primary ms-auto"
                 : "btn btn-primary disabled ms-auto"
             }
           >
-            Login
+            Register
           </button>
         </div>
       </form>

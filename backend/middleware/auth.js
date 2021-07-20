@@ -7,7 +7,7 @@ exports.verifyUserToken = async (req, res, next) => {
   console.log("headers", req.headers);
 
   try {
-    let token = (await req.cookies.jwt) || "";
+    let token = (await req.cookies["jwt"]) || "";
 
     if (!token) {
       return res.status(400).send("Access denied / Unauthorized request");

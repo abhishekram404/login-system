@@ -10,7 +10,8 @@ export const fetch_users = () => {
       }
       dispatch(fetch_users_error(data.error));
     } catch (error) {
-      dispatch(fetch_users_error(error.response.data.error));
+      console.log(error);
+      dispatch(fetch_users_error(error.response?.data.error || error.message));
     }
   };
 };
@@ -28,3 +29,18 @@ const fetch_users_error = (error) => {
     payload: error,
   };
 };
+
+export const delete_user = (id) => {
+  return async (dispatch) => {
+    try {
+      const { data } = await axios.post("/user/delete", {
+        id,
+      });
+      dispatch(fetch_users_success(data.users));
+    } catch (error) {
+      dispatch(fetch_users_error(error.response?.data.error || error.message));
+    }
+  };
+};
+
+// TODO  create deleteUser success and failure

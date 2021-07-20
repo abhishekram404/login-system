@@ -10,20 +10,21 @@ export const send_login_request = (formData) => {
           password: formData.password,
         },
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          // headers: {
+          //   "Content-Type": "application/json",
+          // },
         }
       );
 
       if (data.token) {
-        await dispatch(login_success(data.token));
+        await dispatch(login_success());
         history.push("/");
         return;
       }
       await dispatch(login_error(data.error));
     } catch (error) {
-      dispatch(login_error(error.response.data.error));
+      console.error(error);
+      dispatch(login_error(error.response?.data.error || error.message));
       // dispatch(login_error("Kuch toh gadbad hai daya"));
     }
   };
@@ -32,7 +33,6 @@ export const send_login_request = (formData) => {
 const login_success = (data) => {
   return {
     type: "LOGIN_SUCCESS",
-    payload: data,
   };
 };
 
@@ -55,7 +55,7 @@ export const send_register_request = (formData) => {
       });
 
       if (data.token) {
-        await dispatch(register_request_success(data.token));
+        await dispatch(register_request_success());
         history.push("/users");
         return;
       }
@@ -63,7 +63,10 @@ export const send_register_request = (formData) => {
       history.push("/register");
       return;
     } catch (error) {
-      await dispatch(register_error(error.response.data.error));
+      console.log(error.response);
+      await dispatch(
+        register_error(error.response?.data.error || error.message)
+      );
       history.push("/register");
     }
   };
@@ -71,7 +74,6 @@ export const send_register_request = (formData) => {
 export const register_request_success = (data) => {
   return {
     type: "REGISTRATION_SUCCESSFUL",
-    payload: data,
   };
 };
 

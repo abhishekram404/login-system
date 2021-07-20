@@ -1,4 +1,7 @@
-export const profile_reducer = (state = { user: {} }, action) => {
+export const profile_reducer = (
+  state = { user: null, error: null },
+  action
+) => {
   switch (action.type) {
     case "FETCH_PROFILE_SUCCESS":
       return {

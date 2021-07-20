@@ -14,6 +14,39 @@ exports.users = async (req, res) => {
   }
 };
 
+exports.checkUsername = async (req, res) => {
+  const { username } = req.body;
+  if (username.split(" ").length > 1)
+    return res.send({
+      available: false,
+      message:
+        "The username is not valid. Username must not contain spaces and uppercase letters.",
+    });
+  const usernameExists = await User.find({ username });
+  console.log(usernameExists);
+
+  if (usernameExists.length > 0) {
+    return res.send({
+      available: false,
+      message: `The username ${username} isn't available.`,
+    });
+  }
+
+  return res.send({
+    available: true,
+    message: `The username ${username} is available.`,
+  });
+};
+
+exports.deleteUser = async (req, res) => {
+  const { id } = await req.body;
+
+  await User.findByIdAndDelete(id);
+  const allUsersAfterDeleting = await User.find({});
+  res.send({ users: allUsersAfterDeleting });
+  // console.log(foundUser);
+};
+
 exports.register = async (req, res) => {
   // console.log(req.body);
   const { error } = validate(req.body);
@@ -27,10 +60,9 @@ exports.register = async (req, res) => {
 
     const userExist = await User.findOne({ email: email });
     if (userExist) {
-      console.log(userExist);
       return res.status(400).json({
         error:
-          "The email that you entered is already associated with another account. Please Login.",
+          "The email that you entered is already associated with another account. Please Login or try a different email address.",
       });
     }
 
@@ -39,7 +71,7 @@ exports.register = async (req, res) => {
 
     const createdUser = await User.create({
       name: name.trim(),
-      username: username.replace(/\s/g, ""),
+      username: username.replace(/\s/g, "").toLowerCase(),
       email: email.trim(),
       password: hashedPassword,
       isAdmin,
@@ -53,7 +85,10 @@ exports.register = async (req, res) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: 3600,
     });
-
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: false,
+    });
     res.status(200).send({ token: token });
   } catch (error) {
     res.status(500).send({ error: "Something went wrong! " });
@@ -78,13 +113,15 @@ exports.login = async (req, res) => {
         };
 
         const token = await jwt.sign(payload, process.env.JWT_SECRET, {
-          expiresIn: 3600,
+          expiresIn: 360000,
         });
-        return res.cookie("jwt", token, {
-          httpOnly: true,
-          expires: new Date(Number(new Date().now) + 1 * 360000),
-          secure: false,
-        });
+        return res
+          .cookie("jwt", token, {
+            httpOnly: true,
+
+            secure: false,
+          })
+          .send({ token: token });
       }
       return res.send({ error: "Wrong email/password" }).status(400);
     }

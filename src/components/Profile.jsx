@@ -1,29 +1,42 @@
 import React, { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import axios from "axios";
-// import { fetch_profile } from "../redux/actions/_profileActions";
+import { useDispatch, useSelector } from "react-redux";
+import { fetch_profile } from "../redux/actions/profileActions";
 
 export default function Profile() {
-  //   const dispatch = useDispatch();
-  //   const [jwt, setJwt] = useState(null);
+  const dispatch = useDispatch();
+  const { user, error } = useSelector((state) => state.profileReducer);
+  useEffect(() => {
+    try {
+      dispatch(fetch_profile());
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
 
-  //   const { token } = useSelector(
-  //     (state) => state.loginReducer || state.registerReducer
-  //   );
-
-  //   const [profile, setProfile] = useState({});
-
-  //   useEffect(() => {
-  //     setJwt(token);
-  //   }, [token]);
-
-  //   useEffect(() => {
-  //     try {
-  //       dispatch(fetch_profile());
-  //     } catch (err) {
-  //       console.log(err.response.data.error);
-  //     }
-  //   }, []);
-
-  return <div className="container">Welcome to your profile</div>;
+  return (
+    <div className="container">
+      {user ? (
+        JSON.stringify(user)
+      ) : (
+        <div
+          className="alert alert-danger d-flex justify-content-center align-items-center"
+          role="alert"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            className="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"
+            viewBox="0 0 16 16"
+            role="img"
+            aria-label="Warning:"
+          >
+            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+          </svg>
+          <div>{error}</div>
+        </div>
+      )}
+    </div>
+  );
 }
