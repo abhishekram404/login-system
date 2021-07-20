@@ -19,8 +19,7 @@ exports.checkUsername = async (req, res) => {
   if (username.split(" ").length > 1)
     return res.send({
       available: false,
-      message:
-        "The username is not valid. Username must not contain spaces and uppercase letters.",
+      message: "Username must not contain spaces and uppercase letters.",
     });
   const usernameExists = await User.find({ username });
   console.log(usernameExists);
@@ -58,11 +57,18 @@ exports.register = async (req, res) => {
   try {
     const { name, username, email, password, isAdmin } = req.body;
 
-    const userExist = await User.findOne({ email: email });
-    if (userExist) {
+    const emailExist = await User.findOne({ email: email });
+    const userExist = await User.findOne({ username: username });
+    if (emailExist) {
       return res.status(400).json({
         error:
           "The email that you entered is already associated with another account. Please Login or try a different email address.",
+      });
+    }
+    if (userExist) {
+      return res.status(400).json({
+        error:
+          "The username that you entered is already taken. Please try another username.",
       });
     }
 

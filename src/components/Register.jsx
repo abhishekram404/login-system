@@ -25,7 +25,7 @@ export default function Register() {
   const [doPasswordsMatch, setPasswordsMatch] = useState(false);
   const generatePassword = () => {
     let characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+=[];,./<>?";
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%&_?";
     let suggested_password = "";
     for (let i = 0; i <= 16; i++) {
       suggested_password =
@@ -38,18 +38,18 @@ export default function Register() {
   };
 
   const checkUsernameAvailability = async (uname) => {
-    let format = /`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~/;
-    if (format.test(uname)) {
-      setUsernameAvailable({
-        available: false,
-        message: "Username can't contain special character and spaces..",
-      });
-      return;
-    }
+    // let format = /`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~/;
+    // if (format.test(uname)) {
+    //   setUsernameAvailable({
+    //     available: false,
+    //     message: "Username can't contain special character and spaces..",
+    //   });
+    //   return;
+    // }
     if (uname.length < 3) {
       setUsernameAvailable({
         available: false,
-        message: "Length must be greater than or equal to 3 characters.",
+        message: "Length must be greater than 3 characters.",
       });
       return;
     }
@@ -62,6 +62,7 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     doPasswordsMatch &&
+      usernameAvailable.available &&
       password.length >= 6 &&
       dispatch(
         send_register_request({
@@ -284,7 +285,9 @@ export default function Register() {
           <button
             type="submit"
             className={
-              doPasswordsMatch && password.length >= 6
+              doPasswordsMatch &&
+              password.length >= 6 &&
+              usernameAvailable.available
                 ? "btn btn-primary ms-auto"
                 : "btn btn-primary disabled ms-auto"
             }
